@@ -2,7 +2,9 @@
 title: "Viewership Report - GoT"
 author: "Bartłomiej Ramotowski"
 date: "2025-05-18"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ## *Game of Thrones* – A Cultural Phenomenon
@@ -19,6 +21,7 @@ Below is a dataset of average U.S. viewership (in millions) per episode, based o
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(tidyverse)
 library(readxl)
+library(ggplot2)
 ```
 
 ```{r load-data}
@@ -38,7 +41,7 @@ ggplot(got_episodes, aes(x = Episode, y = Viewership, color = factor(Season))) +
   ) +
   theme_minimal()
 ```
-```{r plot-viewership-2}
+```{r plot-viewership-2, echo = FALSE}
 avg_by_season <- got_episodes %>%
   group_by(Season) %>%
   summarise(Avg_Viewers = mean(Viewership, na.rm = TRUE))
@@ -50,6 +53,24 @@ ggplot(avg_by_season, aes(x = factor(Season), y = Avg_Viewers)) +
     x = "Season",
     y = "Avg. Viewers (Millions)"
   ) +
+  theme_minimal()
+
+```
+
+```{r plot-viewership-3, echo = FALSE}
+ggplot(got_episodes, aes(x = Episode, y = Viewership)) +
+  geom_point() +
+  geom_smooth(se = FALSE, method = "loess", color = "darkred") +
+  labs(title = "Smoothed Viewership Trend", x = "Episode", y = "Viewers (Millions)")
+
+```
+
+```{r plot-viewership-4, echo = FALSE}
+ggplot(got_episodes, aes(x = factor(Episode), y = factor(Season), fill = Viewership)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c() +
+  labs(title = "Heatmap of Viewership by Episode and Season",
+       x = "Episode", y = "Season") +
   theme_minimal()
 
 ```
